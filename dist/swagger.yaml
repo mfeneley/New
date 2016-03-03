@@ -1,0 +1,274 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Robot API (Simple)
+  description: An API created to store and access robots within a building
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /{building_id}/:
+    get:
+      description: Basic webpage templated with Jade that allows for a specefic building to be interfaced with
+      parameters:
+        - name: building_id
+          in: path
+          description: id is generated, other fields can be filled in
+          required: true
+          type: string
+      responses:
+        200:
+          description: building page sent
+          type: string
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+  /{building_id}/robots/:
+    get:
+      description: Returns a complete list of all robots within the building
+      parameters:
+        - name: building_id
+          in: path
+          description: id is generated, other fields can be filled in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: robot response
+        '501':
+          description: not implimented
+          schema:
+            $ref: '#/definitions/errorModel'
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+    post:
+      description: Creates a new robot within the building specefied by building_id
+      parameters:
+        - name: building_id
+          in: path
+          description: id of building containing the robot
+          required: true
+          type: string
+        - name: name
+          in: formData
+          description: name of robot
+          required: false
+          type: string
+        - name: c_movement
+          in: formData
+          description: locomotion type of robot
+          required: false
+          type: string
+        - name: c_offensive
+          in: formData
+          description: whether robot has offensive traits
+          required: false
+          type: boolean
+        - name: c_emergency
+          in: formData
+          description: whether robot has emergency traits
+          required: false
+          type: boolean
+        - name: c_floor
+          in: formData
+          description: current floor of robot
+          required: false
+          type: number
+          format: int
+        - name: c_x_pos
+          in: formData
+          description: x position of robot
+          required: false
+          type: number
+          format: int
+        - name: c_y_pos
+          in: formData
+          description: y position of robot
+          required: false
+          type: number
+          format: int
+      responses:
+        '201':
+          description: robot created successfully
+        '501':
+          description: not implimented
+          schema:
+            $ref: '#/definitions/errorModel'
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+  /robots/{id}:
+    get:
+      description: returns the robot with the specefied id
+      parameters:
+        - name: id
+          in: path
+          description: id used to find robot
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        501:
+          description: not implimented
+          schema:
+            $ref: '#/definitions/errorModel'
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+    put:
+      description: Updates the robot with the specefied id
+      parameters:
+        - name: id
+          in: path
+          description: id used to find robot
+          required: true
+          type: string
+        - name: name
+          in: formData
+          description: name of robot
+          required: false
+          type: string
+        - name: movement
+          in: formData
+          description: locomotion type of robot
+          required: false
+          type: string
+        - name: offensive
+          in: formData
+          description: whether robot has offensive traits
+          required: false
+          type: boolean
+        - name: emergency
+          in: formData
+          description: whether robot has emergency traits
+          required: false
+          type: boolean
+        - name: floor
+          in: formData
+          description: current floor of robot
+          required: false
+          type: number
+          format: int
+        - name: x_pos
+          in: formData
+          description: x position of robot
+          required: false
+          type: number
+          format: int
+        - name: y_pos
+          in: formData
+          description: y position of robot
+          required: false
+          type: number
+          format: int
+      responses:
+        200:
+          description: Robot updated
+        501:
+          description: not implimented
+          schema:
+            $ref: '#/definitions/errorModel'
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+    delete:
+      description: deleted the robot with the specefied id 
+      parameters:
+        - name: id
+          in: path
+          description: id used to find robot
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        501:
+          description: not implimented
+          schema:
+            $ref: '#/definitions/errorModel'
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+  /{building_id}/robots/destroy:
+    delete:
+      description: deleted all robots with the specified building
+      parameters:
+        - name: building_id
+          in: path
+          description: id for the building we want to clear
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+        501:
+          description: not implimented
+          schema:
+            $ref: '#/definitions/errorModel'
+        404: 
+          description: not found
+          schema:
+            $ref: '#/definitions/errorModel'
+definitions:
+  robot:
+    type: object
+    required:
+      - id
+      - home
+      - updated
+    properties:
+      id:
+        type: "string"
+      home:
+        type: "string"
+      name:
+        type: "string"
+      updated:
+        type: "string"
+        format: "dateTime"
+      sensors:
+        type: "array"
+        items: 
+          $ref: '#/definitions/sensor'
+      movement:
+        type: "string"
+      offensive:
+        type: "boolean"
+      emergency:
+        type: "boolean"
+      floor:
+        type: "integer"
+      x_pos:
+        type: "integer"
+      y_pos:
+        type: "integer"
+  sensor:
+    type: object
+    properties:
+      sensorName:
+        type: string
+      sensorType:
+        type: string
+      sensorID:
+        type: string
+      sensorValue:
+        type: number
+  errorModel:
+    type: object
+    required:
+      - message
+    properties:
+      message:
+        type: string
